@@ -17,11 +17,10 @@ app.get('/', (req, res) => {
 
 // Simple contact form submission route (no database)
 app.post('/submit-form', (req, res) => {
-  // Send a success response immediately
   res.json({ success: true, message: 'Form submitted successfully!' });
 });
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`Server running on https://devaananth357.github.io/Portfolio-testing2/`);
+  console.log(`Server running at http://localhost:${PORT}`);
 });
