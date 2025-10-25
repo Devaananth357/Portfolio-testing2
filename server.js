@@ -23,5 +23,5 @@ app.post('/submit-form', (req, res) => {
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`Server running on `);
+  console.log(`Server running on https://devaananth357.github.io/Portfolio-testing2/`);
 });
