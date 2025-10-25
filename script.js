@@ -1,3 +1,5 @@
+// Portfolio JavaScript
+
 // DOM Elements
 const themeToggle = document.getElementById('theme-toggle');
 const navToggle = document.querySelector('.nav-toggle');
@@ -5,7 +7,8 @@ const navLinks = document.querySelector('.nav-links');
 const navItems = document.querySelectorAll('.nav-links a');
 const sections = document.querySelectorAll('section');
 const fadeElements = document.querySelectorAll('.fade-in');
-const contactForm = document.querySelector('.contact-form');
+const contactForm = document.getElementById('contactForm');
+const formStatus = document.getElementById('formStatus');
 
 // Theme Toggle
 themeToggle.addEventListener('click', () => {
@@ -96,23 +99,62 @@ window.addEventListener('load', () => {
     });
 });
 
-// Contact form submission (placeholder functionality)
+// Initialize form handling
+document.addEventListener('DOMContentLoaded', function() {
+    // Any initialization code can go here
+});
+
 if (contactForm) {
-    contactForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        
-        // Get form values
-        const name = document.getElementById('name').value;
-        const email = document.getElementById('email').value;
-        const message = document.getElementById('message').value;
-        
-        // Simple validation
-        if (name && email && message) {
-            // In a real application, you would send this data to a server
-            alert('Thank you for your message! I will get back to you soon.');
-            contactForm.reset();
-        } else {
-            alert('Please fill in all fields.');
-        }
+  contactForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const message = document.getElementById('message').value.trim();
+
+    // Simple validation
+    if (!name || !email || !message) {
+      formStatus.className = 'form-status error';
+      formStatus.textContent = 'Please fill in all fields.';
+      return;
+    }
+
+    const submitBtn = contactForm.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending...';
+    formStatus.className = 'form-status';
+    formStatus.textContent = 'Sending your message...';
+
+    // Send data to Node.js backend
+    fetch('/submit-form', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        name: name,
+        email: email,
+        message: message
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        formStatus.className = 'form-status success';
+        formStatus.textContent = 'Thank you for your message! I will get back to you soon.';
+        contactForm.reset();
+      } else {
+        throw new Error(data.message || 'Something went wrong');
+      }
+    })
+    .catch((error) => {
+      console.error('Form submission error:', error);
+      formStatus.className = 'form-status error';
+      formStatus.textContent = 'Failed to send message. Please try again later.';
+    })
+    .finally(() => {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Send Message';
     });
+  });
 }
